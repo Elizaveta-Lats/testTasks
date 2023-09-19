@@ -1,5 +1,5 @@
 <?
-$mysqli = new mysqli("localhost", "comment_user", "pC6g3EoSeORHhpGQDXzQ", "commentsdb");
+$mysqli = new mysqli("localhost", "comment_user", "pC6g3EoSeORHhpGQDXzQ", "commentsdb"); // права пользователя - SELECT и INSERT
 $all_comments = $mysqli->query("SELECT datetime, text FROM comments");
 
 

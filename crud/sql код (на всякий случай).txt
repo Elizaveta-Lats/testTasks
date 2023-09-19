@@ -1,0 +1,11 @@
+CREATE TABLE comments
+(
+Id bigint PRIMARY KEY AUTO_INCREMENT,
+datetime DATETIME,
+text TEXT
+);
+
+
+INSERT INTO comments(datetime, text) VALUES
+('2023-09-15 18:18:28', 'hrllo'),
+('2023-09-15 18:18:35', 'hello*');
