@@ -1,0 +1,8 @@
+table {
+    border-collapse: collapse; /* Убираем двойные границы между ячейками */
+    border: 1px solid black; /* Рамка вокруг таблицы */
+   }
+td {
+    padding: 10px; /* Поля вокруг текста */
+    border: 1px solid black; /* Рамка вокруг ячеек */
+   }
