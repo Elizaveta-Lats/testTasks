@@ -9,21 +9,19 @@ $data = [
 	['Петров', 'ОБЖ', 4],
 ];
 
-// row[0] - фамилия, row[1] - предмет, row[2] - балл
-
-$subject_array = []; // (пока) пустой массив для предметов
-foreach($data as $row) { // сначала нужно создать все ключи, иначе будут ворнинги (хоть и работает даже если начать сразу суммировать баллы)
-	$table_data[$row[0]][$row[1]] = 0; // словарь словарей
-	array_push($subject_array, $row[1]); // перебирая исходный массив, закидываем все встречающиеся предметы в этот массив
+$subject_array = [];
+foreach($data as $row) { // сначала нужно создать все ключи, иначе будут ворнинги
+	$table_data[$row[0]][$row[1]] = 0;
+	$subject_array[] = $row[1];
 }
 
-foreach($data as $row) { // теперь уже суммируем баллы
+foreach($data as $row) {
 	$table_data[$row[0]][$row[1]] += $row[2];
 }
 
-$subject_array = array_unique($subject_array); // убираем повторы
-asort($subject_array); // сортируем по алфавиту
+$subject_array = array_unique($subject_array);
+asort($subject_array);
 
-ksort($table_data); // сортируем фамилии школьников по алфавиту
+ksort($table_data);
 
 ?>

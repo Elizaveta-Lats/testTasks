@@ -14,39 +14,33 @@ $text = <<<TXT
 TXT;
 
 define("CYRILLIC", "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя");
-$tag_words = explode(" ", $text); // текст с тэгами, разбитый по пробелам
 
-$notags = strip_tags($text); // убираем тэги
-$onlywords = explode(" ", $notags); // разбиваем текст без тэгов по пробелам
-//$onlywords = preg_grep('/[a-zа-я.]/iu', $words); // убираем то, что является числами
+$text = mb_convert_encoding($text, 'HTML-ENTITIES', 'utf-8'); // кодировка
+$dom = new DOMDocument();
+$dom->loadHTML($text);
+$nodes = $dom->getElementsByTagName("*");
 
+$word_count = 0;
+$end_flag = False;
 
-$index = 0; // счетчик слов
-$final_text = []; // массив для обрезанного текста
+foreach ($nodes as $node) {
+	for ($child = $node->firstChild; $child; $child = $child->nextSibling) {
+		if (! ($child->nodeType === XML_TEXT_NODE && trim($child->textContent))) continue;
 
-foreach($tag_words as $word) {
-	array_push($final_text, $word); // закидываем элемент из текста с тэгами
-	$first = array_shift($onlywords); // берем первое слово из текста без тэгов
-	if (strcasecmp(substr($first, -1), ".") == 0) { // если слово без тэга с точкой на конце, точку удаляем
-		$first = substr($first, 0, -1);
-	}
-	if (strpos($first, ".")) { // если слова оказались слеплены из-за тэгов, разделяем их, второе слово возвращают в массив
-		$some_words = str_word_count($first, 1, CYRILLIC);
-		$first = $some_words[0];
-		$second = $some_words[1];
-		if (preg_match('/^[а-я]+$/iu', $second)){ // обход попадания com в список слов
-			array_unshift($onlywords, $second);
-		} else {
-			array_unshift($onlywords, $some_words[2]);
+		$word_count += str_word_count($child->textContent, 0, CYRILLIC);
+		
+		if ($end_flag) $child->textContent = '';
+		
+		if ($word_count >= 29 and ! $end_flag) {
+			$word_count -= str_word_count($child->textContent, 0, CYRILLIC);
+			$delta = 29 - $word_count;
+			$words = explode(" ", $child->textContent);
+			$new_words = array_slice($words, 0, $delta);
+			$new_words[array_key_last($new_words)] .= "...";
+			$child->textContent = implode(" ", $new_words);
+			$word_count += str_word_count($child->textContent, 0, CYRILLIC);
+			$end_flag = True;
 		}
 	}
-	$pos = strpos($word, $first); // ищем вхождение слова из массива без тэгов в слове из массива с тэгами
-	if($pos === false) { // если совпадения не было, временно возвращаем слово в массив
-		array_unshift($onlywords, $first);
-	}
-	else { // если слово совпало, увеличиваем счетчик
-		$index += 1;
-	}
-	if ($index == 29) break; // как только насчитали 29 слов, завершаем цикл
 }
 ?>

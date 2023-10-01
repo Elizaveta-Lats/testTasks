@@ -5,12 +5,9 @@
 		<title>Текст</title>
 	</head>
 	<body>
-		<? include "text.php"; ?>
-		<?
-			foreach($final_text as $word) { // вывод обрезанного текста
-				echo $word, " ";
-			}
-			echo "...";
+		<? 
+			include "text.php";
+			echo $dom->saveHTML();
 		?>
 	</body>
 </html>
